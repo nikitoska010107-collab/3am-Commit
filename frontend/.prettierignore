@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+build
+.vite
+_backups
+package-lock.json
+public
+*.ini
