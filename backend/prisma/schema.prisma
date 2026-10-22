@@ -1,0 +1,282 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("CLIENT")
+  companyId    String?
+  company      Company? @relation(fields: [companyId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  applications   Application[]   @relation("ApplicationClient")
+  statusHistory  StatusHistory[]
+  auditEntries   AuditLog[]
+  notifications  Notification[]
+  documents      Document[]
+  decisions      Decision[]
+
+  @@map("users")
+}
+
+model Company {
+  id         String   @id @default(cuid())
+  inn        String   @unique
+  ogrn       String?
+  name       String
+  legalForm  String   @default("ООО")
+  industry   String
+  revenue    Int
+  foundedAt  DateTime
+  status     String   @default("ACTIVE")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  users         User[]
+  applications  Application[]
+  creditReports CreditReport[]
+
+  @@map("companies")
+}
+
+model Product {
+  id            String  @id @default(cuid())
+  code          String  @unique
+  name          String
+  minAmount     Int
+  maxAmount     Int
+  minTerm       Int
+  maxTerm       Int
+  rate          Float
+  description   String
+  purpose       String
+  isActive      Boolean @default(true)
+  sortOrder     Int     @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  applications Application[]
+
+  @@map("products")
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      User     @relation("ApplicationClient", fields: [clientId], references: [id])
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  amount      Int
+  term        Int
+  purpose     String
+  status      String   @default("DRAFT")
+  formPayload String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  data           ApplicationData[]
+  statusHistory  StatusHistory[]
+  scoringResults ScoringResult[]
+  offers         Offer[]
+  externalChecks ExternalCheck[]
+  notifications  Notification[]
+  auditEntries   AuditLog[]
+  documents      Document[]
+  creditReports  CreditReport[]
+  decisions      Decision[]
+
+  @@index([clientId, status])
+  @@index([companyId])
+  @@map("applications")
+}
+
+model ApplicationData {
+  id            String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  field         String
+  value         String
+  label         String?
+  createdAt     DateTime @default(now())
+
+  @@unique([applicationId, field])
+  @@map("application_data")
+}
+
+model StatusHistory {
+  id            String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fromStatus    String?
+  toStatus      String
+  actorId       String?
+  actor         User?    @relation(fields: [actorId], references: [id])
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+  @@map("status_history")
+}
+
+model ScoringResult {
+  id            String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  score         Int
+  riskLevel     String
+  modelVersion  String   @default("rule-based-v1")
+  summary       String?
+  createdAt     DateTime @default(now())
+
+  factors ScoringFactor[]
+
+  @@map("scoring_results")
+}
+
+model ScoringFactor {
+  id           String   @id @default(cuid())
+  scoringId    String
+  scoring      ScoringResult @relation(fields: [scoringId], references: [id], onDelete: Cascade)
+  code         String
+  title        String
+  value        Float
+  weight       Int
+  contribution Float
+  explanation  String
+  createdAt    DateTime @default(now())
+
+  @@map("scoring_factors")
+}
+
+model Offer {
+  id            String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  amount        Int
+  term          Int
+  rate          Float
+  type          String   @default("STANDARD")
+  status        String   @default("ACTIVE")
+  message       String?
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("offers")
+}
+
+model Decision {
+  id            String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  type          String
+  actorId       String?
+  actor         User?    @relation(fields: [actorId], references: [id])
+  reason        String?
+  payload       String?
+  createdAt     DateTime @default(now())
+
+  @@map("decisions")
+}
+
+model ExternalCheck {
+  id            String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  source        String
+  status        String
+  payload       String
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId, source])
+  @@map("external_checks")
+}
+
+model CreditReport {
+  id            String   @id @default(cuid())
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  applicationId String?
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  bureau        String   @default("BKI-MOCK")
+  creditScore   Int
+  historyScore  Int
+  overdueDays   Int      @default(0)
+  overdueAmount Int      @default(0)
+  totalDebt     Int      @default(0)
+  monthlyDebtPayment Int @default(0)
+  openLoans     Int      @default(0)
+  closedLoans   Int      @default(0)
+  hasBankruptcy Boolean  @default(false)
+  isLiquidated  Boolean  @default(false)
+  registryVerified Boolean @default(true)
+  rawPayload    String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([applicationId])
+  @@map("credit_reports")
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applicationId String?
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  type          String
+  text          String
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorId       String?
+  actor         User?    @relation(fields: [actorId], references: [id])
+  applicationId String?
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  entityType    String
+  entityId      String
+  action        String
+  payload       String?
+  createdAt     DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([applicationId])
+  @@map("audit_log")
+}
+
+model Document {
+  id            String   @id @default(cuid())
+  applicationId String?
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  filename      String
+  storedName    String
+  mimeType      String
+  size          Int
+  kind          String   @default("OTHER")
+  storagePath   String
+  checksum      String
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+  @@map("documents")
+}

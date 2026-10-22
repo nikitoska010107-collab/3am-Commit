@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dist-openapi/
+coverage/
+.env
+.env.local
+.env.*.local
+*.log
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+backend/storage/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

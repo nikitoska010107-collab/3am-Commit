@@ -1,0 +1,2591 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Сервис работает"
+          }
+        },
+        "summary": "Проверка живости сервиса",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "operationId": "NotificationsController_list",
+        "parameters": [
+          {
+            "name": "unread",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список уведомлений"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Уведомления пользователя",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/notifications/{id}/read": {
+      "post": {
+        "operationId": "NotificationsController_markRead",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Обновлённое уведомление"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Отметить уведомление прочитанным",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/notifications/read-all": {
+      "post": {
+        "operationId": "NotificationsController_markAllRead",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Количество обновлённых уведомлений"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Отметить все уведомления прочитанными",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "E-mail уже занят"
+          }
+        },
+        "summary": "Регистрация предпринимателя и его компании",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неверный e-mail или пароль"
+          }
+        },
+        "summary": "Вход по e-mail и паролю, выдаёт JWT",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Текущий пользователь с профилем компании",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/products": {
+      "get": {
+        "operationId": "ProductsController_findAll",
+        "parameters": [
+          {
+            "name": "includeInactive",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Каталог кредитных продуктов",
+        "tags": [
+          "products"
+        ]
+      },
+      "post": {
+        "operationId": "ProductsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Создать кредитный продукт",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "operationId": "ProductsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Продукт не найден"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Карточка кредитного продукта",
+        "tags": [
+          "products"
+        ]
+      },
+      "patch": {
+        "operationId": "ProductsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Обновить условия кредитного продукта",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/applications": {
+      "post": {
+        "operationId": "ApplicationsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Параметры не соответствуют условиям продукта"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Создать черновик заявки",
+        "tags": [
+          "applications"
+        ]
+      },
+      "get": {
+        "operationId": "ApplicationsController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "productId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Список заявок: клиент видит свои, банк — все",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}": {
+      "get": {
+        "operationId": "ApplicationsController_getOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нет доступа к заявке"
+          },
+          "404": {
+            "description": "Заявка не найдена"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Карточка заявки",
+        "tags": [
+          "applications"
+        ]
+      },
+      "patch": {
+        "operationId": "ApplicationsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Заявка не в статусе DRAFT"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Редактировать черновик заявки",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/submit": {
+      "post": {
+        "operationId": "ApplicationsController_submit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Заявка заполнена не полностью"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Отправить заявку на рассмотрение",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/cancel": {
+      "post": {
+        "operationId": "ApplicationsController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Отозвать заявку",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/info-response": {
+      "post": {
+        "operationId": "ApplicationsController_respondToInfoRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InfoResponseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Заявка не в статусе INFO_REQUESTED"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ответ клиента на запрос дополнительных данных",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/offer/accept": {
+      "post": {
+        "operationId": "ApplicationsController_acceptOffer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Принять предложение банка",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/history": {
+      "get": {
+        "operationId": "ApplicationsController_history",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StatusHistoryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "История переходов статусов заявки",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/data": {
+      "get": {
+        "operationId": "ApplicationsController_data",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationDataDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Дополнительные данные заявки",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/offers": {
+      "get": {
+        "operationId": "ApplicationsController_offers",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Предложения банка по заявке",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/audit": {
+      "get": {
+        "operationId": "ApplicationsController_audit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список записей аудита"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Аудит-лог заявки",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{id}/documents": {
+      "post": {
+        "operationId": "DocumentsController_upload",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "FINANCIAL_STATEMENT",
+                      "BANK_STATEMENT",
+                      "REGISTRATION_DOCUMENT",
+                      "OTHER"
+                    ]
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Загрузить документ к заявке",
+        "tags": [
+          "documents"
+        ]
+      },
+      "get": {
+        "operationId": "DocumentsController_list",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Документы заявки",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/documents/{id}": {
+      "get": {
+        "operationId": "DocumentsController_download",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accept",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл документа"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Скачать документ",
+        "tags": [
+          "documents"
+        ]
+      },
+      "delete": {
+        "operationId": "DocumentsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Документ удалён"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Удалить документ",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/mock/bki/{companyId}": {
+      "get": {
+        "operationId": "MocksController_bki",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Отчёт бюро кредитных историй"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Заглушка БКИ: кредитная история компании",
+        "tags": [
+          "mock"
+        ]
+      }
+    },
+    "/api/mock/egrul/{inn}": {
+      "get": {
+        "operationId": "MocksController_egrul",
+        "parameters": [
+          {
+            "name": "inn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Регистрационные данные компании"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Заглушка ЕГРЮЛ: регистрационные данные",
+        "tags": [
+          "mock"
+        ]
+      }
+    },
+    "/api/mock/fns/{inn}": {
+      "get": {
+        "operationId": "MocksController_fns",
+        "parameters": [
+          {
+            "name": "inn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Налоговые данные компании"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Заглушка ФНС: налоговые данные",
+        "tags": [
+          "mock"
+        ]
+      }
+    },
+    "/api/applications/{id}/credit-history/refresh": {
+      "post": {
+        "operationId": "CreditHistoryController_refresh",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshCreditHistoryResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Заявка не найдена"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Запросить и сохранить кредитную историю компании по заявке",
+        "tags": [
+          "credit-history"
+        ]
+      }
+    },
+    "/api/applications/{id}/credit-history": {
+      "get": {
+        "operationId": "CreditHistoryController_getForApplication",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Отчёт ещё не запрашивался",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CreditReportDto"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Последняя сохранённая кредитная история по заявке",
+        "tags": [
+          "credit-history"
+        ]
+      }
+    },
+    "/api/companies/{companyId}/credit-history": {
+      "get": {
+        "operationId": "CreditHistoryController_getForCompany",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditReportDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Последняя сохранённая кредитная история по компании",
+        "tags": [
+          "credit-history"
+        ]
+      }
+    },
+    "/api/bank/applications/{id}/score": {
+      "post": {
+        "operationId": "BankController_score",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoringResultDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Заявка не на рассмотрении"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Запустить скоринг заявки",
+        "tags": [
+          "bank"
+        ]
+      }
+    },
+    "/api/bank/applications/{id}/scoring": {
+      "get": {
+        "operationId": "BankController_getScoring",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoringResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Последний результат скоринга по заявке",
+        "tags": [
+          "bank"
+        ]
+      }
+    },
+    "/api/bank/applications/{id}/decision": {
+      "post": {
+        "operationId": "BankController_decide",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankDecisionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionResultDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Заявка не на рассмотрении"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Решение банка: одобрить, отказать, контрпредложение, запросить данные",
+        "tags": [
+          "bank"
+        ]
+      }
+    },
+    "/api/bank/applications/{id}/sign": {
+      "post": {
+        "operationId": "BankController_sign",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Симуляция подписания документов",
+        "tags": [
+          "bank"
+        ]
+      }
+    },
+    "/api/bank/applications/{id}/disburse": {
+      "post": {
+        "operationId": "BankController_disburse",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Симуляция выдачи кредита",
+        "tags": [
+          "bank"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "API умного кредитного кабинета предпринимателя",
+    "description": "Контракт кредитного конвейера: клиентский путь и кабинет банка. Все данные синтетические, внешние источники — моки.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Локальный стенд"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CompanyInputDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ООО «Восход»"
+          },
+          "inn": {
+            "type": "string",
+            "example": "7701234567"
+          },
+          "ogrn": {
+            "type": "string",
+            "example": "1107746000012"
+          },
+          "legalForm": {
+            "type": "string",
+            "example": "ООО",
+            "enum": [
+              "ООО",
+              "ИП",
+              "АО",
+              "ПАО",
+              "ГУП",
+              "МУП"
+            ]
+          },
+          "industry": {
+            "type": "string",
+            "example": "Строительство"
+          },
+          "revenue": {
+            "type": "number",
+            "example": 8500000
+          },
+          "foundedAt": {
+            "type": "string",
+            "example": "2019-04-12T00:00:00.000Z"
+          }
+        },
+        "required": [
+          "name",
+          "inn",
+          "legalForm",
+          "industry",
+          "revenue",
+          "foundedAt"
+        ]
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "anna@demo.local"
+          },
+          "password": {
+            "type": "string",
+            "example": "demo",
+            "minLength": 8
+          },
+          "name": {
+            "type": "string",
+            "example": "Анна Смирнова"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyInputDto"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "name",
+          "company"
+        ]
+      },
+      "CompanyResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "inn": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "legalForm": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string"
+          },
+          "revenue": {
+            "type": "number"
+          },
+          "foundedAt": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "inn",
+          "name",
+          "legalForm",
+          "industry",
+          "revenue",
+          "foundedAt",
+          "status"
+        ]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "CLIENT",
+              "UNDERWRITER",
+              "ADMIN"
+            ]
+          },
+          "company": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CompanyResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name",
+          "role",
+          "company"
+        ]
+      },
+      "AuthResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string",
+            "example": "Bearer"
+          },
+          "expiresIn": {
+            "type": "number",
+            "example": 86400
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserResponseDto"
+          }
+        },
+        "required": [
+          "accessToken",
+          "tokenType",
+          "expiresIn",
+          "user"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "client.approve@demo.local"
+          },
+          "password": {
+            "type": "string",
+            "example": "demo"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "ProductResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "example": "biz-credit"
+          },
+          "name": {
+            "type": "string",
+            "example": "Кредит на развитие бизнеса"
+          },
+          "minAmount": {
+            "type": "number",
+            "example": 300000
+          },
+          "maxAmount": {
+            "type": "number",
+            "example": 5000000
+          },
+          "minTerm": {
+            "type": "number",
+            "example": 3
+          },
+          "maxTerm": {
+            "type": "number",
+            "example": 60
+          },
+          "rate": {
+            "type": "number",
+            "example": 18.5
+          },
+          "description": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "minAmount",
+          "maxAmount",
+          "minTerm",
+          "maxTerm",
+          "rate",
+          "description",
+          "purpose",
+          "isActive"
+        ]
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "biz-credit"
+          },
+          "name": {
+            "type": "string",
+            "example": "Кредит на развитие бизнеса"
+          },
+          "minAmount": {
+            "type": "number",
+            "example": 300000
+          },
+          "maxAmount": {
+            "type": "number",
+            "example": 5000000
+          },
+          "minTerm": {
+            "type": "number",
+            "example": 3
+          },
+          "maxTerm": {
+            "type": "number",
+            "example": 60
+          },
+          "rate": {
+            "type": "number",
+            "example": 18.5
+          },
+          "description": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "minAmount",
+          "maxAmount",
+          "minTerm",
+          "maxTerm",
+          "rate",
+          "description",
+          "purpose"
+        ]
+      },
+      "UpdateProductDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "minAmount": {
+            "type": "number"
+          },
+          "maxAmount": {
+            "type": "number"
+          },
+          "minTerm": {
+            "type": "number"
+          },
+          "maxTerm": {
+            "type": "number"
+          },
+          "rate": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CompanySnapshotDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ООО «Восход»"
+          },
+          "inn": {
+            "type": "string",
+            "example": "7701234567"
+          },
+          "legalForm": {
+            "type": "string",
+            "enum": [
+              "ООО",
+              "ИП",
+              "АО",
+              "ПАО",
+              "ГУП",
+              "МУП"
+            ]
+          },
+          "industry": {
+            "type": "string",
+            "example": "Строительство"
+          },
+          "revenue": {
+            "type": "number",
+            "example": 8500000
+          },
+          "foundedAt": {
+            "type": "string",
+            "example": "2019-04-12T00:00:00.000Z"
+          }
+        }
+      },
+      "CreateApplicationDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "example": "prod-biz-credit"
+          },
+          "amount": {
+            "type": "number",
+            "example": 1500000,
+            "description": "Сумма кредита в рублях"
+          },
+          "term": {
+            "type": "number",
+            "example": 24,
+            "description": "Срок кредита в месяцах"
+          },
+          "purpose": {
+            "type": "string",
+            "example": "Закупка оборудования для расширения производства"
+          },
+          "purposeCode": {
+            "type": "string",
+            "enum": [
+              "WORKING_CAPITAL",
+              "EQUIPMENT",
+              "INVENTORY",
+              "EXPANSION",
+              "REFINANCING",
+              "PAYROLL"
+            ],
+            "example": "EQUIPMENT"
+          },
+          "contactPhone": {
+            "type": "string",
+            "example": "+7 900 000-00-00"
+          },
+          "contactEmail": {
+            "type": "string",
+            "example": "anna@demo.local"
+          },
+          "monthlyTurnover": {
+            "type": "number",
+            "example": 2500000,
+            "description": "Среднемесячная выручка, ₽"
+          },
+          "averageSalary": {
+            "type": "number",
+            "example": 85000,
+            "description": "Средняя зарплата по штату, ₽"
+          },
+          "employeeCount": {
+            "type": "number",
+            "example": 12
+          },
+          "existingLoans": {
+            "type": "number",
+            "example": 1,
+            "description": "Количество действующих кредитов"
+          },
+          "hasOverdueDebt": {
+            "type": "boolean",
+            "description": "Есть ли просроченная задолженность"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanySnapshotDto"
+          }
+        },
+        "required": [
+          "productId",
+          "amount",
+          "term",
+          "purpose"
+        ]
+      },
+      "ProductBriefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "number"
+          },
+          "minAmount": {
+            "type": "number"
+          },
+          "maxAmount": {
+            "type": "number"
+          },
+          "minTerm": {
+            "type": "number"
+          },
+          "maxTerm": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "rate",
+          "minAmount",
+          "maxAmount",
+          "minTerm",
+          "maxTerm"
+        ]
+      },
+      "CompanyBriefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "inn": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "legalForm": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string"
+          },
+          "revenue": {
+            "type": "number"
+          },
+          "foundedAt": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "inn",
+          "name",
+          "legalForm",
+          "industry",
+          "revenue",
+          "foundedAt",
+          "status"
+        ]
+      },
+      "ClientBriefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name"
+        ]
+      },
+      "ApplicationResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "example": "DRAFT"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "term": {
+            "type": "number"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "purposeCode": {
+            "type": "object",
+            "nullable": true
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductBriefDto"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyBriefDto"
+          },
+          "client": {
+            "$ref": "#/components/schemas/ClientBriefDto"
+          },
+          "formPayload": {
+            "type": "object",
+            "description": "Поля анкеты, сохранённые при заполнении"
+          },
+          "missingFields": {
+            "description": "Поля, которых не хватает банку",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "amount",
+          "term",
+          "purpose",
+          "purposeCode",
+          "product",
+          "company",
+          "client",
+          "formPayload",
+          "missingFields",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateApplicationDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 1500000
+          },
+          "term": {
+            "type": "number",
+            "example": 24
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "purposeCode": {
+            "type": "string",
+            "enum": [
+              "WORKING_CAPITAL",
+              "EQUIPMENT",
+              "INVENTORY",
+              "EXPANSION",
+              "REFINANCING",
+              "PAYROLL"
+            ]
+          },
+          "contactPhone": {
+            "type": "string"
+          },
+          "contactEmail": {
+            "type": "string"
+          },
+          "monthlyTurnover": {
+            "type": "number"
+          },
+          "averageSalary": {
+            "type": "number"
+          },
+          "employeeCount": {
+            "type": "number"
+          },
+          "existingLoans": {
+            "type": "number"
+          },
+          "hasOverdueDebt": {
+            "type": "boolean"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanySnapshotDto"
+          }
+        }
+      },
+      "SubmitApplicationDto": {
+        "type": "object",
+        "properties": {
+          "contactPhone": {
+            "type": "string",
+            "example": "+7 900 000-00-00"
+          },
+          "contactEmail": {
+            "type": "string",
+            "example": "anna@demo.local"
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Подтверждение клиента на отправку заявки"
+          }
+        }
+      },
+      "ApplicationDataInputDto": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "revenue_2025"
+          },
+          "value": {
+            "type": "string",
+            "example": "12500000"
+          },
+          "label": {
+            "type": "string",
+            "example": "Выручка за 2025 год"
+          }
+        },
+        "required": [
+          "field",
+          "value"
+        ]
+      },
+      "InfoResponseDto": {
+        "type": "object",
+        "properties": {
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationDataInputDto"
+            }
+          }
+        },
+        "required": [
+          "answers"
+        ]
+      },
+      "StatusHistoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fromStatus": {
+            "type": "object",
+            "nullable": true
+          },
+          "toStatus": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "object",
+            "nullable": true
+          },
+          "reason": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "fromStatus",
+          "toStatus",
+          "actorId",
+          "reason",
+          "createdAt"
+        ]
+      },
+      "ApplicationDataDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "field",
+          "value",
+          "label"
+        ]
+      },
+      "OfferDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "term": {
+            "type": "number"
+          },
+          "rate": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "object",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "term",
+          "rate",
+          "type",
+          "status",
+          "message",
+          "expiresAt",
+          "createdAt"
+        ]
+      },
+      "DocumentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "applicationId": {
+            "type": "object",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string",
+            "example": "statement-2025.pdf"
+          },
+          "kind": {
+            "type": "string",
+            "example": "FINANCIAL_STATEMENT"
+          },
+          "mimeType": {
+            "type": "string",
+            "example": "application/pdf"
+          },
+          "size": {
+            "type": "number",
+            "example": 248120
+          },
+          "checksum": {
+            "type": "string",
+            "example": "9f2c1e..."
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "applicationId",
+          "userId",
+          "filename",
+          "kind",
+          "mimeType",
+          "size",
+          "checksum",
+          "createdAt"
+        ]
+      },
+      "CreditReportDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": "string"
+          },
+          "applicationId": {
+            "type": "object",
+            "nullable": true
+          },
+          "bureau": {
+            "type": "string",
+            "example": "BKI-MOCK"
+          },
+          "creditScore": {
+            "type": "number",
+            "example": 780
+          },
+          "historyScore": {
+            "type": "number",
+            "example": 23,
+            "description": "Вклад фактора «Качество кредитной истории»"
+          },
+          "overdueDays": {
+            "type": "number",
+            "example": 0
+          },
+          "overdueAmount": {
+            "type": "number",
+            "example": 0
+          },
+          "totalDebt": {
+            "type": "number",
+            "example": 1200000
+          },
+          "monthlyDebtPayment": {
+            "type": "number",
+            "example": 120000
+          },
+          "openLoans": {
+            "type": "number",
+            "example": 1
+          },
+          "closedLoans": {
+            "type": "number",
+            "example": 3
+          },
+          "hasBankruptcy": {
+            "type": "boolean"
+          },
+          "isLiquidated": {
+            "type": "boolean"
+          },
+          "registryVerified": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "companyId",
+          "applicationId",
+          "bureau",
+          "creditScore",
+          "historyScore",
+          "overdueDays",
+          "overdueAmount",
+          "totalDebt",
+          "monthlyDebtPayment",
+          "openLoans",
+          "closedLoans",
+          "hasBankruptcy",
+          "isLiquidated",
+          "registryVerified",
+          "createdAt"
+        ]
+      },
+      "RefreshCreditHistoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "report": {
+            "$ref": "#/components/schemas/CreditReportDto"
+          },
+          "checkStatus": {
+            "type": "string",
+            "example": "PASSED",
+            "description": "PASSED | WARNING | FAILED"
+          },
+          "flags": {
+            "description": "Рекомендации, которые скоринг может использовать",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "report",
+          "checkStatus",
+          "flags"
+        ]
+      },
+      "ScoringFactorDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "CREDIT_HISTORY"
+          },
+          "title": {
+            "type": "string",
+            "example": "Качество кредитной истории"
+          },
+          "value": {
+            "type": "number",
+            "example": 23
+          },
+          "weight": {
+            "type": "number",
+            "example": 25
+          },
+          "contribution": {
+            "type": "number",
+            "example": 23
+          },
+          "explanation": {
+            "type": "string",
+            "example": "Просрочек нет, кредитная история закрытых обязательств положительная."
+          }
+        },
+        "required": [
+          "code",
+          "title",
+          "value",
+          "weight",
+          "contribution",
+          "explanation"
+        ]
+      },
+      "ScoringResultDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "applicationId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "example": 78
+          },
+          "riskLevel": {
+            "type": "string",
+            "example": "LOW",
+            "description": "LOW | MEDIUM | HIGH"
+          },
+          "modelVersion": {
+            "type": "string",
+            "example": "rule-based-v1"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "factors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoringFactorDto"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "applicationId",
+          "score",
+          "riskLevel",
+          "modelVersion",
+          "summary",
+          "factors",
+          "createdAt"
+        ]
+      },
+      "BankDecisionDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "APPROVE",
+              "REJECT",
+              "COUNTER_OFFER",
+              "INFO_REQUEST"
+            ],
+            "example": "COUNTER_OFFER"
+          },
+          "reason": {
+            "type": "string",
+            "example": "Сумма снижена из-за высокой долговой нагрузки"
+          },
+          "counterAmount": {
+            "type": "number",
+            "example": 1200000,
+            "description": "Сумма в контрпредложении, ₽"
+          },
+          "counterTerm": {
+            "type": "number",
+            "example": 36,
+            "description": "Срок в контрпредложении, мес."
+          },
+          "counterRate": {
+            "type": "number",
+            "example": 21.5,
+            "description": "Ставка в контрпредложении, %"
+          },
+          "message": {
+            "type": "string",
+            "example": "Готовы предложить меньшую сумму на больший срок"
+          },
+          "missingFields": {
+            "example": [
+              "revenue_2025",
+              "bank_statement"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "DecisionResultDto": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "example": "COUNTER_OFFER"
+          },
+          "status": {
+            "type": "string",
+            "example": "COUNTER_OFFER"
+          },
+          "offerId": {
+            "type": "object",
+            "nullable": true
+          },
+          "reason": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "applicationId",
+          "type",
+          "status",
+          "offerId",
+          "reason",
+          "createdAt"
+        ]
+      }
+    }
+  }
+}
