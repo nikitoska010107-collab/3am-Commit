@@ -54,7 +54,7 @@ const main = async () => {
       amount: 1500000,
       term: 24,
       purpose:
-        'Р—Р°РєСѓРїРєР° РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ РґР»СЏ СЂР°СЃС€РёСЂРµРЅРёСЏ РїСЂРѕРёР·РІРѕРґСЃС‚РІР°',
+        'Закупка оборудования для расширения производства',
       purposeCode: 'EQUIPMENT',
       contactPhone: '+7 900 111-22-33',
       contactEmail: 'client.approve@demo.local',
@@ -93,15 +93,15 @@ const main = async () => {
   const scoring = await call('POST', `/bank/applications/${created.id}/score`, { token: bankToken })
   console.log('score:', scoring.score, 'risk:', scoring.riskLevel)
   for (const f of scoring.factors)
-    console.log(` - ${f.code}: ${f.contribution}/${f.weight} вЂ” ${f.explanation}`)
+    console.log(` - ${f.code}: ${f.contribution}/${f.weight} — ${f.explanation}`)
 
   step('decision approve')
   const decision = await call('POST', `/bank/applications/${created.id}/decision`, {
     token: bankToken,
     body: {
       type: 'APPROVE',
-      reason: 'РџСЂРѕС„РёР»СЊ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ РїСЂРѕРґСѓРєС‚Сѓ',
-      message: 'РћРґРѕР±СЂРµРЅРѕ',
+      reason: 'Профиль соответствует продукту',
+      message: 'Одобрено',
     },
   })
   console.log('decision:', decision.type, 'status:', decision.status, 'offer:', decision.offerId)
